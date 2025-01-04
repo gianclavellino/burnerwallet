@@ -923,8 +923,9 @@ function App(props) {
           {faucetHint}
         </span>
       </div>
-
+              <br />
       {address && (
+        
         <div
           id="QRPunkBlockieDiv"
           style={{ padding: 16, cursor: "pointer", backgroundColor: "#FFFFFF", width: 420, margin: "auto" }}
@@ -938,299 +939,17 @@ function App(props) {
             amount={amount}
             selectedErc20Token={selectedErc20Token}
           />
-        </div>
-      )}
-
-      <div
-        style={{
-          position: "relative",
-          width: 320,
-          margin: "auto",
-          textAlign: "center",
-          marginTop: 32,
-          backgroundColor: "",
-        }}
-      >
-        <div style={{ padding: 10 }}>
-          {isMoneriumDataLoading && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: -25,
-                paddingBottom: 25,
-              }}
-            >
-              <img
-                src={"/MoneriumLogo.png"}
-                alt={"Monerium Data loading"}
-                style={{
-                  width: "2em",
-                  height: "2em",
-                }}
-              />
-              <Spin />
-            </div>
-          )}
-          {!receiveMode && (
-            <>
-              {isMoneriumTransferReady && (
-                <MoneriumOnChainCrossChainRadio moneriumRadio={moneriumRadio} setMoneriumRadio={setMoneriumRadio} />
-              )}
-              {isMoneriumTransferReady && isCrossChain(moneriumRadio) ? (
-                <MoneriumCrossChainAddressSelector
-                  clientData={moneriumClientData}
-                  currentPunkAddress={address}
-                  targetChain={moneriumTargetChain}
-                  setTargetChain={setMoneriumTargetChain}
-                  targetAddress={moneriumTargetAddress}
-                  setTargetAddress={setMoneriumTargetAddress}
-                  networkName={targetNetwork.name}
-                />
-              ) : (
-                <AddressInput
-                  key={receiveMode}
-                  ensProvider={mainnetProvider}
-                  placeholder={isMoneriumTransferReady ? "to address / IBAN" : "to address"}
-                  disabled={walletConnectTx}
-                  value={toAddress}
-                  setAmount={setAmount}
-                  setToAddress={setToAddress}
-                  hoistScanner={toggle => {
-                    scanner = toggle;
-                  }}
-                  isMoneriumTransferReady={isMoneriumTransferReady}
-                  ibanAddressObject={ibanAddressObject}
-                  setIbanAddressObject={setIbanAddressObject}
-                  networkSettingsHelper={networkSettingsHelper}
-                  setTargetNetwork={setTargetNetwork}
-                  walletConnect={wcLink => {
-                    setWalletConnectUrl(wcLink);
-                  }}
-                />
-              )}
-            </>
-          )}
+       
         </div>
 
-        <div style={{ padding: !receiveMode ? 10 : 0 }}>
-          {walletConnectTx ? (
-            <Input disabled={true} value={amount} />
-          ) : selectedErc20Token ? (
-            <ERC20Input
-              token={selectedErc20Token}
-              value={amount}
-              amount={amount}
-              setAmount={setAmount}
-              balance={balanceERC20}
-              price={priceERC20}
-              setPrice={setPriceERC20}
-              dollarMode={dollarMode}
-              setDollarMode={setDollarMode}
-              receiveMode={receiveMode}
-            />
-          ) : (
-            <EtherInput
-              price={price || targetNetwork.price}
-              value={amount}
-              token={targetNetwork.token || "ETH"}
-              ethMode={amountEthMode}
-              address={address}
-              provider={localProvider}
-              gasPrice={gasPrice}
-              onChange={value => {
-                setAmount(value);
-              }}
-              receiveMode={receiveMode}
-              amount={amount}
-              selectedErc20Token={selectedErc20Token}
-              targetNetwork={targetNetwork}
-            />
-          )}
-        </div>
+        
+      )} 
+      <br />
+      <h1 style={{ textAlign: "center" }}>NFTickets</h1>
 
-        <div style={{ position: "relative", top: 10, left: 40 }}> {networkDisplay} </div>
+    
 
-        {!receiveMode && (
-          <div style={{ padding: 10 }}>
-            <Button
-              key={receiveMode}
-              type="primary"
-              disabled={
-                loading ||
-                !amount ||
-                (!toAddress && !(isMoneriumTransferReady && isCrossChain(moneriumRadio))) ||
-                (isValidIban(toAddress) && !isIbanAddressObjectValid(ibanAddressObject))
-              }
-              loading={loading}
-              onClick={async () => {
-                setLoading(true);
-
-                if (isMoneriumTransferReady && isCrossChain(moneriumRadio)) {
-                  const order = await placeCrossChainOrder(
-                    moneriumClient,
-                    address,
-                    { targetChainName: moneriumTargetChain, address: moneriumTargetAddress },
-                    amount,
-                    networkName,
-                  );
-                  await initMoneriumOrders();
-                } else if (isValidIban(toAddress)) {
-                  const order = await placeIbanOrder(moneriumClient, address, ibanAddressObject, amount, networkName);
-                  await initMoneriumOrders();
-                } else {
-                  let txConfig = {
-                    chainId: selectedChainId,
-                  };
-
-                  if (!selectedErc20Token) {
-                    let value;
-                    try {
-                      console.log("PARSE ETHER", amount);
-                      value = parseEther("" + amount);
-                      console.log("PARSEDVALUE", value);
-                    } catch (e) {
-                      const floatVal = parseFloat(amount).toFixed(8);
-
-                      console.log("floatVal", floatVal);
-                      // failed to parseEther, try something else
-                      value = parseEther("" + floatVal);
-                      console.log("PARSEDfloatVALUE", value);
-                    }
-
-                    txConfig.to = toAddress;
-                    txConfig.value = value;
-                  } else {
-                    if (selectedErc20Token) {
-                      txConfig.erc20 = {
-                        token: selectedErc20Token,
-                        to: toAddress,
-                        amount: amount,
-                      };
-                    }
-                  }
-
-                  if (networkName == "arbitrum") {
-                    //txConfig.gasLimit = 21000;
-                    //ask rpc for gas price
-                  } else if (networkName == "optimism") {
-                    //ask rpc for gas price
-                  } else if (networkName == "gnosis") {
-                    //ask rpc for gas price
-                  } else if (networkName == "polygon") {
-                    //ask rpc for gas price
-                  } else if (networkName == "goerli") {
-                    //ask rpc for gas price
-                  } else if (networkName == "base") {
-                    //ask rpc for gas price
-                  } else if (networkName == "sepolia") {
-                    //ask rpc for gas price
-                  } else {
-                    txConfig.gasPrice = gasPrice;
-                  }
-
-                  console.log("SEND AND NETWORK", targetNetwork);
-
-                  let result = tx(txConfig);
-                  result = await result;
-                  console.log(result);
-                }
-
-                // setToAddress("")
-                setAmount("");
-                setData("");
-
-                setShowHistory(true);
-                setLoading(false);
-
-                monitorBalance(selectedErc20Token, targetNetwork.rpcUrl, address, balanceERC20, setBalanceERC20);
-              }}
-            >
-              {loading ||
-              !amount ||
-              (!toAddress && !(isMoneriumTransferReady && isCrossChain(moneriumRadio))) ||
-              (isValidIban(toAddress) && !isIbanAddressObjectValid(ibanAddressObject)) ? (
-                <CaretUpOutlined />
-              ) : (
-                <SendOutlined style={{ color: "#FFFFFF" }} />
-              )}{" "}
-              Send
-            </Button>
-          </div>
-        )}
-      </div>
-
-      <div style={{ padding: 16, backgroundColor: "#FFFFFF", width: 420, margin: "auto" }}>
-        {
-          <TransactionResponses
-            provider={userProvider}
-            signer={userProvider.getSigner()}
-            injectedProvider={injectedProvider}
-            address={address}
-            chainId={targetNetwork.chainId}
-            blockExplorer={blockExplorer}
-            moneriumOrders={moneriumOrders}
-            showHistory={showHistory}
-            setShowHistory={setShowHistory}
-          />
-        }
-      </div>
-
-      <div style={{ padding: "1em" }}>
-        <Switch
-          checkedChildren="Send"
-          unCheckedChildren="Receive"
-          defaultChecked
-          onChange={() => setReceiveMode(!receiveMode)}
-        />
-      </div>
-
-      <div style={{ zIndex: -1, paddingTop: 20, opacity: 0.5, fontSize: 12 }}>
-        <Button
-          style={{ margin: 8, marginTop: 16 }}
-          onClick={() => {
-            window.open("https://zapper.fi/account/" + address + "?tab=history");
-          }}
-        >
-          <span style={{ marginRight: 8 }}>📜</span>History
-        </Button>
-
-        <Button
-          style={{ margin: 8, marginTop: 16 }}
-          onClick={() => {
-            window.open("https://zapper.fi/account/" + address);
-          }}
-        >
-          <span style={{ marginRight: 8 }}>👛</span> Inventory
-        </Button>
-      </div>
-
-      <div style={{ clear: "both", maxWidth: "100%", width: 975, margin: "auto", marginTop: 32, position: "relative" }}>
-        {web3wallet && <WalletConnectActiveSessions web3wallet={web3wallet} />}
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            paddingBottom: "1em",
-          }}
-        >
-          <Input
-            style={{ width: "40%", textAlign: "center" }}
-            placeholder={"wallet connect url (or use the scanner-->)"}
-            value={""}
-            onChange={e => {
-              setWalletConnectUrl(e.target.value);
-            }}
-          />
-        </div>
-
-        <IFrame address={address} userProvider={userProvider} />
-
-        <div style={{ paddingTop: "2em" }}>{memoizedMonerium}</div>
-      </div>
+   
 
       {networkName == "ethereum" ? (
         <div style={{ zIndex: -1, padding: 64, opacity: 0.5, fontSize: 12 }}>
@@ -1290,12 +1009,7 @@ function App(props) {
         ""
       )}
 
-      <div style={{ zIndex: -1, padding: 64, opacity: 0.5, fontSize: 12 }}>
-        created with <span style={{ marginRight: 4 }}>🏗</span>
-        <a href="https://github.com/austintgriffith/scaffold-eth#-scaffold-eth" target="_blank">
-          scaffold-eth
-        </a>
-      </div>
+   
       <div style={{ padding: 32 }} />
 
       <div
@@ -1309,48 +1023,11 @@ function App(props) {
           padding: 10,
         }}
       >
-        <Button
-          type="primary"
-          shape="circle"
-          style={{ backgroundColor: targetNetwork.color, borderColor: targetNetwork.color }}
-          size="large"
-          onClick={() => {
-            scanner(true);
-          }}
-        >
-          <ScanOutlined style={{ color: "#FFFFFF" }} />
-        </Button>
+       
       </div>
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
-      <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
-        <Row align="middle" gutter={[16, 16]}>
-          <Col span={12}>
-            <Ramp price={price} address={address} networks={NETWORKS} />
-          </Col>
-
-          {networkName == "arbitrum" ||
-          networkName == "gnosis" ||
-          networkName == "optimism" ||
-          networkName == "polygon" ? (
-            ""
-          ) : (
-            <Col span={12} style={{ textAlign: "center", opacity: 0.8 }}>
-              <GasGauge gasPrice={gasPrice} />
-            </Col>
-          )}
-        </Row>
-
-        <Row align="middle" gutter={[4, 4]}>
-          <Col span={24}>
-            {faucetAvailable ? (
-              <Faucet localProvider={localProvider} price={price} ensProvider={mainnetProvider} />
-            ) : (
-              ""
-            )}
-          </Col>
-        </Row>
-      </div>
+      <a href="https://www.clavellino.it/"><b>clavellino</b>.eth</a>
     </div>
   );
 }

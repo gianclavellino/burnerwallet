@@ -1,4 +1,6 @@
 {
+  
+
   "name": "@scaffold-eth/monorepo",
   "version": "1.0.0",
   "keywords": [
@@ -59,5 +61,8 @@
       "**/hardhat",
       "**/hardhat/**"
     ]
+  },
+  "dependencies": {
+    "babel-jest": "^24.9.0"
   }
 }
