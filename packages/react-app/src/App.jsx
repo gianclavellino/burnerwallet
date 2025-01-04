@@ -896,7 +896,7 @@ function App(props) {
 
         <span style={{ verticalAlign: "middle" }}>
           <div
-            style={{ display: "flex", justifyContent: erc20Tokens ? "space-evenly" : "center", alignItems: "center" color: "white"}}
+            style={{ display: "flex", justifyContent: erc20Tokens ? "space-evenly" : "center", alignItems: "center"}}
           >
             <div>
               <SelectorWithSettings
