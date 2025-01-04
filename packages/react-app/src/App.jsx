@@ -896,7 +896,7 @@ function App(props) {
 
         <span style={{ verticalAlign: "middle" }}>
           <div
-            style={{ display: "flex", justifyContent: erc20Tokens ? "space-evenly" : "center", alignItems: "center" }}
+            style={{ display: "flex", justifyContent: erc20Tokens ? "space-evenly" : "center", alignItems: "center" color: "white"}}
           >
             <div>
               <SelectorWithSettings
@@ -950,64 +950,6 @@ function App(props) {
     
 
    
-
-      {networkName == "ethereum" ? (
-        <div style={{ zIndex: -1, padding: 64, opacity: 0.5, fontSize: 12 }}>
-          {depositing ? (
-            <div style={{ width: 200, margin: "auto" }}>
-              <EtherInput
-                /*price={price || targetNetwork.price}*/
-                value={depositAmount}
-                token={targetNetwork.token || "ETH"}
-                // address={address}
-                // provider={localProvider}
-                // gasPrice={gasPrice}
-                onChange={value => {
-                  setDepositAmount(value);
-                }}
-              />
-              <Button
-                style={{ margin: 8, marginTop: 16 }}
-                onClick={() => {
-                  console.log("DEPOSITING", depositAmount);
-                  tx({
-                    to: "0x99C9fc46f92E8a1c0deC1b1747d010903E884bE1",
-                    value: ethers.utils.parseEther(depositAmount),
-                    gasLimit: 175000,
-                    gasPrice: gasPrice,
-                    data:
-                      "0xb1a1a882000000000000000000000000000000000000000000000000000000000013d62000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000",
-                  });
-                  setDepositAmount();
-                  setDepositing();
-                }}
-              >
-                <span style={{ marginRight: 8 }}>🔴</span>Deposit
-              </Button>
-            </div>
-          ) : (
-            <div>
-              <Button
-                style={{ margin: 8, marginTop: 16 }}
-                onClick={() => {
-                  setDepositing(true);
-                  /*tx({
-                  to: "0x99C9fc46f92E8a1c0deC1b1747d010903E884bE1",
-                  value: ethers.utils.parseEther("0.01"),
-                  gasLimit: 175000,
-                  gasPrice: gasPrice,
-                  data: "0xb1a1a882000000000000000000000000000000000000000000000000000000000013d62000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000"
-                })*/
-                }}
-              >
-                <span style={{ marginRight: 8 }}>🔴</span>Deposit to OE
-              </Button>
-            </div>
-          )}
-        </div>
-      ) : (
-        ""
-      )}
 
    
       <div style={{ padding: 32 }} />
