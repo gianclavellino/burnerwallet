@@ -969,7 +969,7 @@ function App(props) {
       </div>
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
-      <a href="https://www.clavellino.it/"><b>clavellino</b>.eth</a>
+      <a href="https://www.clavellino.it/"><b>clavellino</b>.eth</a> <a href="https://scaffoldeth.io/"><b>· scaffold</b>.eth</a>
     </div>
   );
 }
