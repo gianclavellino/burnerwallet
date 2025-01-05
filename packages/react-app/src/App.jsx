@@ -945,7 +945,7 @@ function App(props) {
         
       )} 
       <br />
-    <div id="nftickets" >  <h1 style={{ textAlign: "center" }}>NFTickets</h1></div>
+   <span> <h1 style={{ textAlign: "center" }}>NFTickets</h1></span>
 
     
 
