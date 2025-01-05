@@ -23,3 +23,8 @@ h1 {
 .ant-modal-title {
   color: black!important;
 }
+
+
+.ant-modal-title a {
+  color: black!important;
+}
